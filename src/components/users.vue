@@ -31,12 +31,11 @@ export default {
       selected: [],
       headers: [
         {
-          text: 'username',
+          text: 'userid',
           align: 'start',
           sortable: false,
-          value: 'username',
+          value: 'userid',
         },
-        {text: 'userid', value: 'userid'},
         {text: 'fname', value: 'fname'},
         {text: 'lname', value: 'lname'},
         {text: 'email', value: 'email'},

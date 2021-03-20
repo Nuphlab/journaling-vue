@@ -19,11 +19,13 @@
           class="register"
           label="Email"
           v-model="email"
+          append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
       ></v-text-field>
       <v-text-field
           class="loginPass"
           label="password"
           v-model="password"
+          append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
       ></v-text-field>
     </v-form>
       <v-btn color="brown" @click="login()">Login</v-btn>
@@ -34,7 +36,7 @@
     <v-container>
       <v-card class="pa-2">
       <v-row>
-        <v-col align-self="align-left">
+        <v-col>
       <h1 class="mt-3">Register</h1>
       <v-form>
         <v-text-field
@@ -95,6 +97,7 @@ name: "login",
     registerUsername: "",
     registerfirstName: "",
     registerlastName: "",
+    show1: false,
   }
   },
   async mounted() {
@@ -113,15 +116,13 @@ name: "login",
         console.log(data)
         const res = await axios.post('http://192.168.50.63:8000/rpc/login', data, {'Content-Type': "application/json"})
         let token = res.data[0].token
-         // console.log(res)
-         console.log(token)
+        localStorage.token = token
         if (res.status) {
           console.log(res.status)
           this.$emit('clicked', 'home')
         }
         localStorage.loggedin = true
         localStorage.email = this.email
-        // localStorage.setItem()
       }catch (e){
         console.log(e)
       }

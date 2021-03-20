@@ -33,6 +33,7 @@
 import users from "./components/users";
 import login from "./components/login";
 import home from "@/components/home";
+
 export default {
   name: 'App',
   components: {users, login, home},
