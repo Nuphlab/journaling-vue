@@ -18,10 +18,11 @@ name: "journal_entries",
   },
   methods: {
     async GetJournalEntries() {
+      // FIXME: FIND OUT IF OUR SERVICES CAN SUPPORT INPUTTING USERID AND JOURNALID
       let journalID = ""
       let journalEntries
       try {
-        const res = await axios.get(`http://192.168.50.63:8000/journal_entry?journalid=eq.${}`)
+        const res = await axios.get(`http://192.168.50.63:8000/journal_entry?journalid=eq.${journalID}`)
         res.data
         journalEntries = res.data
         console.log(journalEntries)
