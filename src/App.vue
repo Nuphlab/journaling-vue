@@ -20,21 +20,11 @@
           <h1 class="mt-2">Journaling</h1>
         </div>
         <v-spacer></v-spacer>
-        <v-btn @click="login">Login</v-btn>
+        <v-btn @click="logout">Logout</v-btn>
       </v-app-bar>
-    <v-content>
-      <component v-bind:is="component"></component>
-      <v-container v-if="!loggedIn">
-      <v-card class="align-center">
-        <v-card-title>
-          Welcome To The Journaling App!
-        </v-card-title>
-        <v-card-text>
-          Login To Start Sharing Your Day
-        </v-card-text>
-      </v-card>
-      </v-container>
-    </v-content>
+    <v-main>
+      <component v-bind:is="component" @clicked="onClickChild"></component>
+    </v-main>
     </v-app>
   </div>
 </template>
@@ -48,11 +38,21 @@ export default {
   components: {users, login, home},
   data: () => ({
     component: "login",
-    loggedIn: false
+    loggedIn: localStorage.loggedin || false
   }),
-  methods: {
-    login() {
+  mounted() {
+    if (localStorage.loggedin) {
       this.component = "home"
+    }
+  },
+  methods: {
+    onClickChild(value) {
+      console.log(value)
+      this.component = value
+    },
+    logout() {
+      this.component = "login"
+      localStorage.clear()
     },
     toggle() {
       if (this.component === login) {
