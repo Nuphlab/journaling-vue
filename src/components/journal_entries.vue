@@ -7,11 +7,27 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
 name: "journal_entries",
   data() {
     return {
 
+    }
+  },
+  methods: {
+    async GetJournalEntries() {
+      let journalID = ""
+      let journalEntries
+      try {
+        const res = await axios.get(`http://192.168.50.63:8000/journal_entry?journalid=eq.${}`)
+        res.data
+        journalEntries = res.data
+        console.log(journalEntries)
+      } catch(e) {
+        console.log(e)
+      }
     }
   }
 }
