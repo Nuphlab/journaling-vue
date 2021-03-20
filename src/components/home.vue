@@ -12,9 +12,9 @@
           </v-menu>
         </v-card-actions>
       </v-card>
-    <journals></journals>
-    <journal_entries></journal_entries>
-    <friendslist></friendslist>
+    <journals v-if="isMounted"></journals>
+    <journal_entries v-if="isMounted"></journal_entries>
+    <friendslist v-if="isMounted"></friendslist>
   </div>
 </template>
 
@@ -30,6 +30,7 @@ name: "home",
     return {
       email: "",
       name: "",
+      isMounted: false
     }
   },
   components: {
@@ -43,10 +44,12 @@ name: "home",
       localStorage.name = profile.username
       localStorage.userid = profile.userid
       this.name = localStorage.name
+      console.log(localStorage.userid)
     }
   },
   async mounted() {
     await this.getprofile()
+    this.isMounted = true
   }
 }
 </script>

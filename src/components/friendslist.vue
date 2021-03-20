@@ -36,10 +36,9 @@ export default {
     async GetFriendsList() {
       try {
         this.values = []
+        console.log('localstorage userid:' + localStorage.userid)
         const res = await axios.get(`http://192.168.50.63:8000/isfriends?userid_1=eq.${localStorage.userid}`)
-        res.data
         this.friends = res.data
-        //console.log(this.friends)
 
         await this.GetFriendsProfiles()
 
@@ -50,14 +49,15 @@ export default {
           }
           this.values.push(body)
         }
-        //console.log(this.values)
       } catch (e) {
         console.log(e)
       }
     },
     async GetFriendsProfiles() {
+      console.log('entered get profiles')
       this.friendArray = []
-      // console.log(this.values)
+      this.values = []
+
       for(let i = 0; i < this.friends.length; ++i) {
         let friendId = this.friends[i].isfriendsuserid_2
         console.log('friendid:' + friendId)

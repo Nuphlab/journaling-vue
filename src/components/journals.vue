@@ -58,14 +58,14 @@ name: "journals",
       const config = {
         headers: { Authorization: `Bearer ${this.token}` }
       }
-      console.log(config)
+      //console.log(config)
       let body = {
         title: this.title,
         description: this.description,
         userid: localStorage.userid
       }
       try {
-        console.log(body)
+        //console.log(body)
         const res = await axios.post('http://192.168.50.63:8000/journal', body, config)
         console.log(res)
         alert('Journal Successfully Submitted!')
@@ -82,13 +82,16 @@ name: "journals",
         console.log(journals)
 
         for (let journal in journals) {
-          let body = {
-            journalid: journals[journal].journalid,
-            title: journals[journal].title,
-            description: journals[journal].description,
-            userid: journals[journal].userid,
+          console.log(journals[journal].userid)
+          if(localStorage.userid == journals[journal].userid) {
+            let body = {
+              journalid: journals[journal].journalid,
+              title: journals[journal].title,
+              description: journals[journal].description,
+              userid: journals[journal].userid,
+            }
+            this.values.push(body)
           }
-          this.values.push(body)
         }
       } catch (e) {
         console.log(e)
