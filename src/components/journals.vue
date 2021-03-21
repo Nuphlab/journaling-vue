@@ -65,8 +65,7 @@ name: "journals",
     handleclick(value) {
       localStorage.component = 'journal_entries'
       localStorage.journalid = value.journalid
-      this.$emit('clickedJournal', 'journal_entries')
-      console.log(value)
+      this.$router.push('./journal_entries')
     },
     async createJournal() {
       const config = {
