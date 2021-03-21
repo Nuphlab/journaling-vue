@@ -33,17 +33,18 @@
 import users from "./components/users";
 import login from "./components/login";
 import home from "@/components/home";
-
+import journal_entries from "@/components/journal_entries";
+import journals from "@/components/journals";
 export default {
   name: 'App',
-  components: {users, login, home},
+  components: {users, login, home, journal_entries, journals},
   data: () => ({
     component: "login",
     loggedIn: localStorage.loggedin || false
   }),
   mounted() {
     if (localStorage.loggedin) {
-      this.component = "home"
+      this.component = localStorage.component || 'home'
     }
   },
   methods: {

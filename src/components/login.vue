@@ -22,57 +22,101 @@
           append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
       ></v-text-field>
       <v-text-field
+          type="password"
           class="loginPass"
           label="password"
           v-model="password"
-          append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+          append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
       ></v-text-field>
     </v-form>
       <v-btn color="brown" @click="login()">Login</v-btn>
       </v-card>
     </v-container>
 
-
+<!-- Register Component -->
     <v-container>
       <v-card class="pa-2">
       <v-row>
         <v-col>
       <h1 class="mt-3">Register</h1>
-      <v-form>
-        <v-text-field
-            class="register"
-            label="Username"
-            v-model="registerUsername"
-        ></v-text-field>
-        <v-text-field
-            class="register"
-            label="Email"
-            v-model="registerEmail"
-        ></v-text-field>
-        <v-text-field
-            class="register"
-            label="First Name"
-            v-model="registerfirstName"
-        ></v-text-field>
-        <v-text-field
-            class="register"
-            label="Last Name"
-            v-model="registerlastName"
-        ></v-text-field>
-        </v-form>
-        <password
-            class="password"
-            v-model="registerPassword"
-            :toggle="true"
-            @score="showScore"
-            @feedback="showFeedback"
-        >
-        </password>
-        <password
-            class="password"
-            v-model="confirmPassword">
-        </password>
-      <v-btn @click="register()" color="red">Register</v-btn>
+          <validation-observer
+              ref="observer"
+              v-slot="{ invalid }"
+          >
+            <form @submit.prevent="submit">
+              <validation-provider
+                  v-slot="{ errors }"
+                  name="Username"
+                  rules="required|max:30"
+              >
+                <v-text-field
+                    v-model="registerUsername"
+                    :counter="30"
+                    :error-messages="errors"
+                    label="Username"
+                    required
+                ></v-text-field>
+              </validation-provider>
+
+              <validation-provider
+                  v-slot="{ errors }"
+                  name="Email"
+                  rules="required|email"
+              >
+                <v-text-field
+                    v-model="registerEmail"
+                    :error-messages="errors"
+                    label="Email"
+                    required
+                ></v-text-field>
+              </validation-provider>
+<!--
+              <validation-provider
+                  v-slot="{ errors }"
+                  name="First Name"
+                  rules="required|max:30"
+              >
+                <v-text-field
+                    v-model="registerfirstName"
+                    :counter="30"
+                    :error-messages="errors"
+                    label="First Name"
+                    required
+                ></v-text-field>
+              </validation-provider>
+
+              <validation-provider
+                  v-slot="{ errors }"
+                  name="Last Name"
+                  rules="required|max:15"
+              >
+                <v-text-field
+                    v-model="registerlastName"
+                    :counter="30"
+                    :error-messages="errors"
+                    label="Last Name"
+                    required
+                ></v-text-field>
+              </validation-provider>
+              -->
+
+              <passwordchecker @check="setPass2" @pass1="setPass1" :register-password="registerPassword" v-model="registerPassword"></passwordchecker>
+
+              <v-btn
+                  class="mr-4"
+                  type="submit"
+                  :disabled="invalid"
+                  @click="register"
+                  color="red"
+              >
+                submit
+              </v-btn>
+              <v-btn @click="clear">
+                clear
+              </v-btn>
+            </form>
+          </validation-observer>
+
         </v-col>
       </v-row>
       </v-card>
@@ -82,13 +126,43 @@
 
 <script>
 import axios from "axios";
-// import VuePassword from 'vue-password';
-import Password from 'vue-password-strength-meter'
+import passwordchecker from '@/components/passwordchecker'
+import { required, digits, email, max, regex } from 'vee-validate/dist/rules'
+import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
+
+setInteractionMode('eager')
+
+extend('digits', {
+  ...digits,
+  message: '{_field_} needs to be {length} digits. ({_value_})',
+})
+
+extend('required', {
+  ...required,
+  message: '{_field_} can not be empty',
+})
+
+extend('max', {
+  ...max,
+  message: '{_field_} may not be greater than {length} characters',
+})
+
+extend('regex', {
+  ...regex,
+  message: '{_field_} {_value_} does not match {regex}',
+})
+
+extend('email', {
+  ...email,
+  message: 'Email must be valid',
+})
 
 export default {
 name: "login",
   data () {
   return {
+    passwordsMatch: false,
+    show: false,
     email: "",
     password: "",
     registerEmail: "",
@@ -104,14 +178,40 @@ name: "login",
     // this.email = localStorage.email
   },
   components: {
-    Password
+    passwordchecker,
+    ValidationProvider,
+    ValidationObserver
+
   },
   methods: {
+    setPass1(value) {
+      this.registerPassword = value
+      console.log('regpass: ' +value)
+    },
+    setPass2(value) {
+      this.confirmPassword = value
+      console.log('confirmpass: ' + value)
+    },
+    submit() {
+      this.$refs.observer.validate()
+    },
+    clear () {
+      this.confirmPassword = ''
+      this.registerUsername = ''
+      this.registerEmail = ''
+      this.registerfirstName = ''
+      this.registerlastName = ''
+      this.registerPassword = ''
+      this.$refs.observer.reset()
+    },
     async login() {
       try {
         let data = {
+          username: this.username,
           email: this.email,
-          password: this.password
+          firstName: this.firstName,
+          lastName: this.lastName,
+          password: this.password,
         }
         console.log(data)
         const res = await axios.post('http://192.168.50.63:8000/rpc/login', data, {'Content-Type': "application/json"})
@@ -128,24 +228,26 @@ name: "login",
       }
     },
     async register() {
-      if(this.registerPassword === this.confirmPassword){
+      if(this.confirmPassword === this.registerPassword) {
+        let body = {
+          email: this.registerEmail,
+          password: this.registerPassword,
+          name: this.registerUsername,
+        }
+        console.log(body)
         try {
-          const res = await axios.post('http://192.168.50.63:8000/user_profile')
+          const res = await axios.post('http://192.168.50.63:8000/rpc/signup', body)
           console.log(res)
+          this.email = this.registerEmail
+          this.password = this.registerPassword
+          await this.login()
         }catch (e){
-          console.log(e)
+          alert(e)
         }
       }
       else {
         alert('Passwords do not match! Please Re-enter.')
       }
-    },
-    showFeedback ({suggestions, warning}) {
-      console.log('🙏', suggestions)
-      console.log('⚠', warning)
-    },
-    showScore (score) {
-      console.log('💯', score)
     }
   }
 }

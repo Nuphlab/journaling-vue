@@ -5,13 +5,19 @@
         v-model="selected"
         :headers="headers"
         :items="values"
-        :single-select="singleSelect"
+        :search="search"
         item-key="name"
-        show-select
         class="elevation-1"
-    ></v-data-table>
-
+        select-all
+        @click:row="handleclick"
+    >
+      <template v-slot:[`item.actions`]="{ item }">
+        <v-icon small class="mr-2" @click="editTutorial(item.id)">mdi-pencil</v-icon>
+        <v-icon small @click="deleteTutorial(item.id)">mdi-delete</v-icon>
+      </template>
+    </v-data-table>
     <v-card>
+      <v-card-title class="ml-n3">Create Journal</v-card-title>
       <v-form class="ma-2, pa-2">
         <v-text-field v-model="title" label="Title"></v-text-field>
         <v-textarea v-model="description" label="Description"></v-textarea>
@@ -37,15 +43,16 @@ name: "journals",
       userid: localStorage.userid,
       token: localStorage.token,
       headers: [
-        {
-          text: 'Journal ID',
-          align: 'start',
-          sortable: false,
-          value: 'journalid',
-        },
+        {text: 'Journal ID', value: 'journalid'},
         {text: 'Title', value: 'title'},
         {text: 'Description', value: 'description'},
         {text: 'User ID', value: 'userid'},
+        {
+          text: 'Actions',
+          align: 'start',
+          sortable: false,
+          value: 'actions',
+        }
       ],
       values: []
     }
@@ -54,6 +61,12 @@ name: "journals",
     await this.GetJournals()
   },
   methods: {
+    handleclick(value) {
+      localStorage.component = 'journal_entries'
+      localStorage.journalid = value.journalid
+      this.$emit('clickedJournal', 'journal_entries')
+      console.log(value)
+    },
     async createJournal() {
       const config = {
         headers: { Authorization: `Bearer ${this.token}` }

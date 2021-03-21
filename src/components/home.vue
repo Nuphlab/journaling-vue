@@ -12,8 +12,8 @@
           </v-menu>
         </v-card-actions>
       </v-card>
-    <journals v-if="isMounted"></journals>
-    <journal_entries v-if="isMounted"></journal_entries>
+    <journals v-if="isMounted" @clickedJournal="onClickChild"></journals>
+    <journal_entries v-if="isMounted" @backbtn="backbutton"></journal_entries>
     <friendslist v-if="isMounted"></friendslist>
   </div>
 </template>
@@ -45,6 +45,16 @@ name: "home",
       localStorage.userid = profile.userid
       this.name = localStorage.name
       console.log(localStorage.userid)
+    },
+    backbutton(value) {
+      localStorage.component = 'journals'
+      console.log(value)
+      this.$emit('clicked', 'journals')
+    },
+    onClickChild(value) {
+      console.log(value)
+      this.$emit('clicked', 'journal_entries')
+      // localStorage.journalid = value.journalid
     }
   },
   async mounted() {
