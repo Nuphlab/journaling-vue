@@ -107,7 +107,7 @@
                   type="submit"
                   :disabled="invalid"
                   @click="register"
-                  color="red"
+                  color="brown"
               >
                 submit
               </v-btn>
