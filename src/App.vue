@@ -20,31 +20,40 @@
           <h1 class="mt-2">Journaling</h1>
         </div>
         <v-spacer></v-spacer>
-        <v-btn @click="logout">Logout</v-btn>
+
+        <v-btn :key="this.loggedin" v-if="!this.loggedin" to="/login" text>
+          Login
+        </v-btn>
+
+        <v-btn :key="this.loggedin" v-if="!this.loggedin" to="/register" text>
+          Register
+        </v-btn>
+
+        <v-btn :key="this.loggedin" @click="logout" v-if="this.loggedin">Logout</v-btn>
       </v-app-bar>
     <v-main>
+      <router-view @rerender="rerender"></router-view>
+      <!--
       <component v-bind:is="component" @clicked="onClickChild"></component>
+      -->
     </v-main>
     </v-app>
   </div>
 </template>
 
 <script>
-import users from "./components/users";
-import login from "./components/login";
-import home from "@/components/home";
-import journal_entries from "@/components/journal_entries";
-import journals from "@/components/journals";
+
 export default {
   name: 'App',
-  components: {users, login, home, journal_entries, journals},
   data: () => ({
-    component: "login",
-    loggedIn: localStorage.loggedin || false
+    loggedin: Boolean
   }),
-  mounted() {
-    if (localStorage.loggedin) {
-      this.component = localStorage.component || 'home'
+  async mounted() {
+    this.loggedin = localStorage.loggedin
+  },
+  watch: {
+    loggedin: function () {
+      this.loggedin = localStorage.loggedin
     }
   },
   methods: {
@@ -53,15 +62,13 @@ export default {
       this.component = value
     },
     logout() {
-      this.component = "login"
+      this.loggedin = false
+      this.$router.push('/landingpage')
       localStorage.clear()
     },
-    toggle() {
-      if (this.component === login) {
-        this.component = users;
-      } else {
-        this.component = login;
-      }
+    rerender() {
+      console.log('ran rerender')
+      this.loggedin = true
     }
   }
 };

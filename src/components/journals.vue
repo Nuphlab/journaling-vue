@@ -36,6 +36,7 @@ export default {
 name: "journals",
   data() {
     return {
+      search: "",
       selected: false,
       singleselect: false,
       title: "",

@@ -4,13 +4,6 @@
         <v-card-text>
           Welcome Back {{name}}!!
         </v-card-text>
-        <v-card-actions>
-          <v-menu>
-            Create Journal
-            Make An Entry
-            Manage Friends
-          </v-menu>
-        </v-card-actions>
       </v-card>
     <journals v-if="isMounted" @clickedJournal="onClickChild"></journals>
     <journal_entries v-if="isMounted" @backbtn="backbutton"></journal_entries>
@@ -57,7 +50,7 @@ name: "home",
       // localStorage.journalid = value.journalid
     }
   },
-  async mounted() {
+  async beforeMount() {
     await this.getprofile()
     this.isMounted = true
   }

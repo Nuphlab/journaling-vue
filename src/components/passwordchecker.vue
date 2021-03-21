@@ -1,7 +1,7 @@
 <template>
   <div id="app" v-cloak>
 
-    <label for="pass1">Password</label>
+    <label class="ma-0" for="pass1">Password</label>
     <div class="password">
       <input id="pass1" :class='{valid:passwordValidation.valid}' :type="passwordVisible ? 'text' : 'password'" v-model="password">
       <button class="visibility" tabindex='-1' @click='togglePasswordVisibility' :arial-label='passwordVisible ? "Hide password" : "Show password"'>
@@ -9,7 +9,7 @@
       </button>
     </div>
     <div>
-      <label for="pass2">Re-enter Password</label>
+      <label class="ma-0" for="pass2">Re-enter Password</label>
     </div>
     <input id="pass2" type="password" v-model.lazy='checkPassword'>
 

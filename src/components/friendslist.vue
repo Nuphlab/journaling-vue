@@ -41,14 +41,17 @@ export default {
         this.friends = res.data
 
         await this.GetFriendsProfiles()
-
+/*
         for (let friend in this.friends) {
           let body = {
             username: this.friends[friend].username,
             email: this.friends[friend].email,
           }
-          this.values.push(body)
+          console.log(body)
+          // this.values.push(body)
         }
+
+ */
       } catch (e) {
         console.log(e)
       }

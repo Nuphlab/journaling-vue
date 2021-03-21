@@ -2,8 +2,22 @@
 <v-main>
   <v-btn @click="backbtn">Back</v-btn>
   <v-alert>Entries</v-alert>
-  <v-data-table>
+
+  <v-data-table
+      v-model="selected"
+      :headers="headers"
+      :items="values"
+      :search="search"
+      item-key="name"
+      class="elevation-1"
+      select-all
+  >
+    <template v-slot:[`item.actions`]="{ item }">
+      <v-icon small class="mr-2" @click="editTutorial(item.id)">mdi-pencil</v-icon>
+      <v-icon small @click="deleteTutorial(item.id)">mdi-delete</v-icon>
+    </template>
   </v-data-table>
+
 </v-main>
 </template>
 
@@ -14,7 +28,22 @@ export default {
 name: "journal_entries",
   data() {
     return {
+      headers: [
 
+        {text: 'Entry', value: 'bodytext'},
+        {text: 'Date Created', value: 'datecreated'},
+        {text: 'Entry ID', value: 'entryid'},
+        {text: 'Journal ID', value: 'journalid'},
+        {text: 'Location', value: 'location'},
+        {
+          text: 'Actions',
+          align: 'start',
+          sortable: false,
+          value: 'actions',
+        }
+      ],
+      values: [],
+      selected: false,
     }
   },
   async mounted() {
@@ -36,6 +65,18 @@ name: "journal_entries",
         res.data
         journalEntries = res.data
         console.log(journalEntries)
+
+        for(let entry in journalEntries) {
+          let body = {}
+          body = {
+            bodytext: journalEntries[entry].bodytext,
+            datecreated: journalEntries[entry].datecreated,
+            entryid: journalEntries[entry].entryid,
+            journalid: journalEntries[entry].journalid,
+            location: journalEntries[entry].location
+          }
+            this.values.push(body)
+        }
       } catch(e) {
         console.log(e)
       }
