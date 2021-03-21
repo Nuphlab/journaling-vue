@@ -31,7 +31,8 @@ name: "journal_entries",
       // let journalID = ""
       let journalEntries
       try {
-        const res = await axios.get(`http://192.168.50.63:8000/journal_entry?journalid=eq.${localStorage.journalid}`)
+        console.log(localStorage.journalid)
+        const res = await axios.get(`http://192.168.50.63:8000/entry?journalid=eq.${localStorage.journalid}`)
         res.data
         journalEntries = res.data
         console.log(journalEntries)
