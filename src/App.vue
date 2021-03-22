@@ -15,9 +15,10 @@
               :src="require('@/static/journal-icon.png')"
               transition="scale-transition"
               width="40"
+              @click="gotoWelcomePage()"
           />
 
-          <h1 class="mt-2">Journaling</h1>
+          <h1 @click="gotoWelcomePage()" class="mt-2">Journaling</h1>
         </div>
         <v-spacer></v-spacer>
 
@@ -54,6 +55,11 @@ export default {
     this.loggedin = localStorage.loggedin
   },
   methods: {
+    gotoWelcomePage() {
+      if(this.loggedin) {
+        this.$router.push('/welcomepage')
+      }
+    },
     onClickChild(value) {
       console.log(value)
       this.component = value

@@ -67,7 +67,7 @@
           <v-spacer></v-spacer>
           <!-- <v-btn :disabled="!valid" @click="signIn()" text>Login</v-btn> -->
           <v-btn depressed @click="clear()" color="grey">Clear</v-btn>
-          <v-btn :disabled="!valid" depressed @click="signIn()" color="brown">Login</v-btn>
+          <v-btn :disabled="!valid" depressed @click="signIn()" color="brown">Register</v-btn>
         </v-card-actions>
       </ValidationObserver>
     </v-card>
@@ -78,6 +78,7 @@
 <script>
 import {ValidationProvider, extend} from "vee-validate/dist/vee-validate.full";
 import { ValidationObserver } from "vee-validate/dist/vee-validate.full";
+import axios from "axios";
 // can customize default error messages
 extend("required", {
   message: (field, values) => "You must enter a " + `${field} ${values}` + " value"
@@ -135,6 +136,28 @@ export default {
         console.log("is not valid");
         alert("Please fix errors first!");
       } else {
+
+        try {
+          let data = {
+            email: this.email,
+            password: this.password,
+            name: this.name
+          }
+          const res = await axios.post('http://192.168.50.63:8000/rpc/signup', data, {'Content-Type': "application/json"}).catch(err => {
+            if (err.response.status === 409) {
+              throw new Error('Duplicate User Email');
+            }
+          });
+          console.log(data)
+          console.log(res)
+          if(res.status === 200) {
+            this.$router.push('/login')
+            alert('Successfully Registered! Proceed to Login.')
+          }
+        } catch (err) {
+          alert(err)
+        }
+
         console.log("is valid");
         console.log(this.name + " signed in with password " + this.password);
         // reset fields

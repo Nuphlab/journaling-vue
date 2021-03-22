@@ -1,6 +1,7 @@
 <template>
+  <v-app>
 <v-main>
-  <v-btn color="grey" @click="backbtn">Back to Journals</v-btn>
+  <v-btn depressed color="grey darken-2" @click="backbtn">Back to Journals</v-btn>
   <v-alert>
     <h3>Your Entries</h3>
   </v-alert>
@@ -156,7 +157,8 @@
 
 
 
-</v-main>
+  </v-main>
+  </v-app>
 </template>
 
 <script>

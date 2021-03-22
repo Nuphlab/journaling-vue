@@ -1,10 +1,5 @@
 <template>
   <div id="app">
-      <v-card>
-        <v-card-text>
-          Welcome Back {{name}}!!
-        </v-card-text>
-      </v-card>
     <journals v-if="isMounted" @clickedJournal="onClickChild"></journals>
     <friendslist v-if="isMounted"></friendslist>
   </div>

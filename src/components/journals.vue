@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <v-main>
+      <v-btn depressed color="grey darken-2" @click="backbtn">Home</v-btn>
     <v-alert>
       <h3>Your Journals</h3>
     </v-alert>
@@ -208,6 +209,9 @@ name: "journals",
     await this.GetJournals()
   },
   methods: {
+    backbtn(){
+      this.$router.push('/welcomepage')
+    },
     setJournalID(value) {
       console.log(value)
       this.journalid = value
