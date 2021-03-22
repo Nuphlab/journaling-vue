@@ -1,6 +1,7 @@
 <template>
   <v-main>
     <v-alert>Your Journals</v-alert>
+
     <v-data-table
         v-model="selected"
         :headers="headers"
@@ -8,14 +9,104 @@
         :search="search"
         item-key="name"
         class="elevation-1"
-        select-all
-        @click:row="handleclick"
     >
+
+      <!-- open journal entries -->
+      <template v-slot:[`item.enter`]="{ item }">
+        <v-dialog
+            v-model="dialogUpdate"
+            persistent
+            max-width="600px"
+            :retain-focus="false"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+                depressed
+                small
+                class="mr-2"
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+                @click="handleclick(item.journalid)"
+            >Open</v-btn>
+          </template>
+        </v-dialog>
+      </template>
+
+      <!-- update -->
       <template v-slot:[`item.actions`]="{ item }">
-        <v-icon small class="mr-2" @click="editTutorial(item.id)">mdi-pencil</v-icon>
-        <v-icon small @click="deleteTutorial(item.id)">mdi-delete</v-icon>
+        <v-dialog
+            v-model="dialogUpdate"
+            persistent
+            max-width="600px"
+            :retain-focus="false"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon
+                small
+                class="mr-2"
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+                @click="item"
+            >mdi-pencil</v-icon>
+          </template>
+          <vcard>
+
+          </vcard>
+        </v-dialog>
+
+        <!-- delete -->
+        <v-dialog
+            v-model="dialogUpdate"
+            persistent
+            max-width="600px"
+            :retain-focus="false"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon
+                small
+                class="mr-2"
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+            >mdi-delete</v-icon>
+          </template>
+          <v-card>
+
+          </v-card>
+        </v-dialog>
+
+
+        <!-- update -->
+        <v-dialog
+            v-model="dialogUpdate"
+            persistent
+            max-width="600px"
+            :retain-focus="false"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon
+                small
+                class="mr-2"
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+            >mdi-plus</v-icon>
+          </template>
+          <v-card>
+
+          </v-card>
+        </v-dialog>
+
       </template>
     </v-data-table>
+
+    <!-- create journal -->
     <v-card>
       <v-card-title class="ml-n3">Create Journal</v-card-title>
       <v-form class="ma-2, pa-2">
@@ -43,7 +134,9 @@ name: "journals",
       description: "",
       userid: localStorage.userid,
       token: localStorage.token,
+      journalid: '',
       headers: [
+        {text: '', value: 'enter'},
         {text: 'Journal ID', value: 'journalid'},
         {text: 'Title', value: 'title'},
         {text: 'Description', value: 'description'},
@@ -63,8 +156,8 @@ name: "journals",
   },
   methods: {
     handleclick(value) {
-      localStorage.component = 'journal_entries'
-      localStorage.journalid = value.journalid
+      localStorage.journalid = value
+      console.log(value)
       this.$router.push('./journal_entries')
     },
     async createJournal() {

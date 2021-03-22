@@ -17,9 +17,13 @@ export default new Router({
     routes: [
         {
             path: "/",
-            alias: "/login",
-            name: "login",
-            component: login
+            name: "landingpage",
+            component: landingpage
+        },
+        {
+            path: "/landingpage",
+            name: "landingpage",
+            component: landingpage
         },
         {
             path: "/home",
@@ -57,9 +61,9 @@ export default new Router({
             component: register
         },
         {
-            path: "/landingpage",
-            name: "landingpage",
-            component: landingpage
+            path: "/login",
+            name: "login",
+            component: login
         }
     ]
 });

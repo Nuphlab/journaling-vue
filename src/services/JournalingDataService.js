@@ -1,8 +1,9 @@
 import http from "../http-common";
+import axios from "axios";
 
 class TutorialDataService {
-    getAll() {
-        return http.get("/tutorials");
+    editjournal(data) {
+        return axios.post(data)
     }
 
     get(id) {

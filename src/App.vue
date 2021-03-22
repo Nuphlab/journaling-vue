@@ -21,11 +21,11 @@
         </div>
         <v-spacer></v-spacer>
 
-        <v-btn :key="this.loggedin" v-if="!this.loggedin" to="/login" text>
+        <v-btn v-if="!this.loggedin" to="/login" text>
           Login
         </v-btn>
 
-        <v-btn :key="this.loggedin" v-if="!this.loggedin" to="/register" text>
+        <v-btn v-if="!this.loggedin" to="/register" text>
           Register
         </v-btn>
 
@@ -42,19 +42,16 @@
 </template>
 
 <script>
+import mixins from "@/mixins/mixins.js";
 
 export default {
   name: 'App',
+  mixins: [mixins],
   data: () => ({
-    loggedin: Boolean
+    loggedin: false
   }),
-  async mounted() {
+  mounted() {
     this.loggedin = localStorage.loggedin
-  },
-  watch: {
-    loggedin: function () {
-      this.loggedin = localStorage.loggedin
-    }
   },
   methods: {
     onClickChild(value) {
