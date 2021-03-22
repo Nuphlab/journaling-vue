@@ -1,7 +1,9 @@
 <template>
 <v-main>
-  <v-btn @click="backbtn">Back to Journals</v-btn>
-  <v-alert>Entries</v-alert>
+  <v-btn color="grey" @click="backbtn">Back to Journals</v-btn>
+  <v-alert>
+    <h3>Your Entries</h3>
+  </v-alert>
 
   <v-data-table
       v-model="selected"
@@ -10,6 +12,47 @@
       class="elevation-1"
       @click:row="rowInfo"
   >
+    <template v-slot:[`item.bodytext`]="{ item }">
+      <v-dialog
+          v-model="dialogEntry"
+          persistent
+          max-width="600px"
+          :retain-focus="false"
+          @click="item"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+              small
+              class="mr-2"
+              color="primary"
+              dark
+              v-bind="attrs"
+              v-on="on"
+          >Open</v-btn>
+        </template>
+        <v-card>
+          <v-card-title class="mb-4">
+            <h4>Entry</h4>
+          </v-card-title>
+          <v-card-text class="pb-0">
+            <v-textarea readonly outlined v-model="item.bodytext">
+            </v-textarea>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+                class="mb-2"
+                color="warning"
+                text
+                @click="dialogEntry = false"
+            >
+              Close
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </template>
+
     <template v-slot:[`item.actions`]="{ item }">
 
       <!--update-->
@@ -64,6 +107,7 @@
           v-model="dialogDelete"
           persistent
           max-width="600px"
+          :retain-focus="false"
       >
         <template v-slot:activator="{ on, attrs }">
           <v-icon
@@ -80,11 +124,9 @@
             <span class="headline">Delete Entry</span>
           </v-card-title>
           <v-card-text>
-            <v-container>
               <v-alert >
                 <h3>Are you sure you want to delete this entry?</h3>
               </v-alert>
-            </v-container>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -124,6 +166,7 @@ export default {
 name: "journal_entries",
   data() {
     return {
+      dialogEntry: false,
       dialogUpdate: false,
       dialogDelete: false,
       entryid: '',

@@ -1,6 +1,8 @@
 <template>
   <v-main>
-    <v-alert>Your Journals</v-alert>
+    <v-alert>
+      <h3>Your Journals</h3>
+    </v-alert>
 
     <v-data-table
         v-model="selected"
@@ -53,17 +55,18 @@
                 @click="item"
             >mdi-pencil</v-icon>
           </template>
-          <vcard>
+          <v-card>
 
-          </vcard>
+          </v-card>
         </v-dialog>
 
         <!-- delete -->
         <v-dialog
-            v-model="dialogUpdate"
+            v-model="dialogDelete"
             persistent
             max-width="600px"
             :retain-focus="false"
+            @click:row="setJournalID"
         >
           <template v-slot:activator="{ on, attrs }">
             <v-icon
@@ -73,15 +76,41 @@
                 dark
                 v-bind="attrs"
                 v-on="on"
+                @click.stop="setJournalID(item.journalid)"
             >mdi-delete</v-icon>
           </template>
           <v-card>
-
+            <v-card-title>
+              <h3 class="headline">Delete Journal</h3>
+            </v-card-title>
+            <v-card-text>
+                <v-alert >
+                  <h3>Are you sure you want to delete this Journal?</h3>
+                </v-alert>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                  dense
+                  color="primary"
+                  text
+                  @click="dialogDelete = false"
+              >
+                Cancel
+              </v-btn>
+              <v-btn
+                  color="error"
+                  text
+                  @click="deletejournal(); dialogDelete = false"
+              >
+                Delete
+              </v-btn>
+            </v-card-actions>
           </v-card>
         </v-dialog>
 
 
-        <!-- update -->
+        <!-- add entry -->
         <v-dialog
             v-model="dialogUpdate"
             persistent
@@ -107,16 +136,36 @@
     </v-data-table>
 
     <!-- create journal -->
-    <v-card>
-      <v-card-title class="ml-n3">Create Journal</v-card-title>
-      <v-form class="ma-2, pa-2">
-        <v-text-field v-model="title" label="Title"></v-text-field>
-        <v-textarea v-model="description" label="Description"></v-textarea>
-        <v-btn @click="createJournal">Create</v-btn>
-      </v-form>
-    </v-card>
-    <v-data-table
-    ></v-data-table>
+    <v-dialog
+        v-model="dialogCreateJournal"
+        persistent
+        max-width="600px"
+        :retain-focus="false"
+    >
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+            small
+            class="ma-2"
+            color="brown"
+            dark
+            v-bind="attrs"
+            v-on="on"
+        >Create Journal</v-btn>
+      </template>
+      <v-card>
+        <v-card-title class="ml-n3">Create Journal</v-card-title>
+        <v-card-text>
+          <v-text-field v-model="title" label="Title"></v-text-field>
+          <v-textarea v-model="description" label="Description"></v-textarea>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+          <v-btn class="mr-2" color="red" @click="dialogCreateJournal = false">Cancel</v-btn>
+          <v-btn color="primary" @click="createJournal(); dialogCreateJournal = false">Create</v-btn>
+          </v-card-actions>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
   </v-main>
 </template>
 
@@ -127,6 +176,9 @@ export default {
 name: "journals",
   data() {
     return {
+      dialogCreateJournal: false,
+      dialogUpdate: false,
+      dialogDelete: false,
       search: "",
       selected: false,
       singleselect: false,
@@ -155,6 +207,26 @@ name: "journals",
     await this.GetJournals()
   },
   methods: {
+    setJournalID(value) {
+      console.log(value)
+      this.journalid = value
+    },
+    async deletejournal() {
+      const config = {
+        headers: {'Authorization': 'Bearer ' + localStorage.token}
+      }
+      try {
+        console.log(this.journalid)
+        const res = await axios.delete(`http://192.168.50.63:8000/journal?journalid=eq.${this.journalid}`, config)
+        console.log(res)
+        // alert('Journal Successfully Submitted!')
+      } catch (e) {
+        console.log(e)
+        alert('Error deleting. Please refresh the page or check connection.')
+      }
+      this.values = []
+      await this.GetJournals()
+    },
     handleclick(value) {
       localStorage.journalid = value
       console.log(value)
@@ -174,10 +246,14 @@ name: "journals",
         //console.log(body)
         const res = await axios.post('http://192.168.50.63:8000/journal', body, config)
         console.log(res)
-        alert('Journal Successfully Submitted!')
+        // alert('Journal Successfully Submitted!')
       } catch (e) {
         console.log(e)
       }
+      this.title = ''
+      this.description = ''
+      this.values = []
+      await this.GetJournals()
     },
     async GetJournals() {
       let journals
