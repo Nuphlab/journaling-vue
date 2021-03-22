@@ -1,7 +1,7 @@
 <template>
-  <div id="app">
+  <v-app>
     <v-container>
-      <v-card class="align-center">
+      <v-card>
         <v-card-title>
           Welcome To The Journaling App!
         </v-card-title>
@@ -12,9 +12,8 @@
     </v-container>
 
     <v-container>
-      <v-card class="pa-2">
-      <h1>Login</h1>
-    <v-form>
+      <v-card class="mx-auto pl-5 pr-5 pt-5 pa-3" max-width="450">
+      <h3>Login</h3>
       <v-text-field
           class="register"
           label="Email"
@@ -28,11 +27,10 @@
           v-model="password"
           append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
       ></v-text-field>
-    </v-form>
       <v-btn color="brown" @click="login">Login</v-btn>
       </v-card>
     </v-container>
-  </div>
+  </v-app>
 </template>
 
 <script>
@@ -71,7 +69,7 @@ name: "login",
         if (res.status) {
           console.log(res.status)
           this.$emit('rerender')
-          this.$router.push('./home')
+          this.$router.push('./welcomepage')
         }
       }catch (e){
         alert('Password/Username is incorrect!')

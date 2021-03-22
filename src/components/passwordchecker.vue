@@ -1,40 +1,37 @@
 <template>
   <div id="app" v-cloak>
 
-    <label class="ma-0" for="pass1">Password</label>
+    <h2>Password</h2>
+
     <div class="password">
-      <input id="pass1" :class='{valid:passwordValidation.valid}' :type="passwordVisible ? 'text' : 'password'" v-model="password">
+      <input :class='{valid:passwordValidation.valid}' :type="passwordVisible ? 'text' : 'password'" v-model="password">
       <button class="visibility" tabindex='-1' @click='togglePasswordVisibility' :arial-label='passwordVisible ? "Hide password" : "Show password"'>
         <i class="material-icons">{{ passwordVisible ? "visibility" : "visibility_off" }}</i>
       </button>
     </div>
-    <div>
-      <label class="ma-0" for="pass2">Re-enter Password</label>
-    </div>
-    <input id="pass2" type="password" v-model.lazy='checkPassword'>
 
-    <div class="matches" v-if='notSamePasswords'>
-      <v-alert color="warning">Passwords don't match!</v-alert>
-    </div>
-    <div v-else>
-      <v-alert color="success">Passwords match!</v-alert>
-    </div>
+    <input type="password" v-model.lazy='checkPassword'>
 
     <transition name="hint" appear>
       <div v-if='passwordValidation.errors.length > 0 && !submitted' class='hints'>
         <h2>Hints</h2>
-        <p v-for='error in passwordValidation.errors' v-bind:key="error">{{error}}</p>
+        <p :key="error" v-for='error in passwordValidation.errors'>{{error}}</p>
       </div>
     </transition>
 
+    <div class="matches" v-if='notSamePasswords'>
+      <p>Passwords don't match.</p>
+    </div>
 
-    <!--
-        <button @click='resetPasswords' v-if='passwordsFilled && !notSamePasswords && passwordValidation.valid'>
-          Submit
-        </button>
-        -->
-      </div>
-    </template>
+    <div>
+      <button @click='resetPasswords' v-if='passwordsFilled && !notSamePasswords && passwordValidation.valid'>
+        Submit
+      </button>
+    </div>
+
+  </div>
+
+</template>
 
     <script>
     import 'material-icons/iconfont/material-icons.scss';
@@ -51,14 +48,12 @@
             { message:"8 characters minimum.", regex:/.{8,}/ },
             { message:"One number required.", regex:/[0-9]+/ }
           ],
-          password: this.registerPassword,
-          checkPassword: '',
+          password:'',
+          checkPassword:'',
           passwordVisible:false,
-          submitted:false
+          submitted:false,
+          registerPassword: ''
         }
-      },
-      props: {
-        registerPassword: String
       },
       methods: {
         resetPasswords () {
@@ -92,9 +87,9 @@
             }
           }
           if (errors.length === 0) {
-            this.$emit('pass1', this.password)
-            this.$emit('check', this.checkPassword)
-            return { valid:true, errors }
+            this.$emit('matched')
+            // return { valid:true, errors }
+            return
           } else {
             return { valid:false, errors }
           }

@@ -6,7 +6,6 @@
         </v-card-text>
       </v-card>
     <journals v-if="isMounted" @clickedJournal="onClickChild"></journals>
-    <journal_entries v-if="isMounted" @backbtn="backbutton"></journal_entries>
     <friendslist v-if="isMounted"></friendslist>
   </div>
 </template>
@@ -14,7 +13,6 @@
 <script>
 import axios from "axios";
 import journals from "@/components/journals";
-import journal_entries from "@/components/journal_entries";
 import friendslist from "@/components/friendslist";
 
 export default {
@@ -27,7 +25,7 @@ name: "home",
     }
   },
   components: {
-    journals, journal_entries, friendslist
+    journals, friendslist
   },
   methods: {
     async getprofile() {

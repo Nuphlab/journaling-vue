@@ -9,6 +9,7 @@ import passwordchecker from "@/components/passwordchecker";
 import friendslist from "@/components/friendslist";
 import register from "@/components/register";
 import landingpage from "@/components/landingpage";
+import welcomepage from "@/components/welcomepage";
 
 Vue.use(Router);
 
@@ -24,6 +25,11 @@ export default new Router({
             path: "/landingpage",
             name: "landingpage",
             component: landingpage
+        },
+        {
+            path: "/welcomepage",
+            name: "welcomepage",
+            component: welcomepage
         },
         {
             path: "/home",

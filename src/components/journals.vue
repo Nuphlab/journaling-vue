@@ -1,5 +1,6 @@
 <template>
-  <v-main>
+  <v-app>
+    <v-main>
     <v-alert>
       <h3>Your Journals</h3>
     </v-alert>
@@ -165,8 +166,8 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-
-  </v-main>
+    </v-main>
+  </v-app>
 </template>
 
 <script>

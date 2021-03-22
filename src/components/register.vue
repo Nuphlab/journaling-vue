@@ -1,159 +1,152 @@
 <template>
-  <div id="app">
-
-    <!-- Register Component -->
+  <v-app>
     <v-container>
-      <v-card class="pa-2">
-        <v-row>
-          <v-col>
-            <v-card-title>Register</v-card-title>
-            <validation-observer
-                ref="observer"
-                v-slot="{ invalid }"
-            >
-              <form @submit.prevent="submit">
-                <validation-provider
-                    v-slot="{ errors }"
-                    name="Username"
-                    rules="required|max:30"
-                >
-                  <v-text-field
-                      v-model="registerUsername"
-                      :counter="30"
-                      :error-messages="errors"
-                      label="Username"
-                      required
-                  ></v-text-field>
-                </validation-provider>
+    <v-card class="mx-auto pl-5 pr-5 pt-5" max-width="450" outlined>
+      <h3>Register</h3>
+      <ValidationObserver ref="observer" v-slot="{ valid }">
+        <ValidationProvider
+            name="name"
+            ref="name"
+            rules="required|alpha|max:20"
+            v-slot="{ errors }"
+            :bails="false"
+        >
+          <v-text-field v-model="name" label="Name" outlined></v-text-field>
+          <ul style="color:red" class="overline text-left">
+            <li v-for="(error, index) in errors" :key="index">
+              <span>{{ error }}</span>
+            </li>
+          </ul>
+        </ValidationProvider>
 
-                <validation-provider
-                    v-slot="{ errors }"
-                    name="Email"
-                    rules="required|email"
-                >
-                  <v-text-field
-                      v-model="registerEmail"
-                      :error-messages="errors"
-                      label="Email"
-                      required
-                  ></v-text-field>
-                </validation-provider>
+        <ValidationProvider
+            name="email"
+            ref="email"
+            rules="required|email"
+            v-slot="{ errors }"
+            :bails="false"
+        >
+          <v-text-field
+              class="ma-0"
+              v-model="email"
+              label="Email"
+              counter
+              outlined
+          ></v-text-field>
+          <ul style="color:red" class="overline text-left">
+            <li v-for="(error, index) in errors" :key="index">
+              <span>{{ error }}</span>
+            </li>
+          </ul>
+        </ValidationProvider>
 
-                <passwordchecker @check="setPass2" @pass1="setPass1" :register-password="registerPassword" v-model="registerPassword"></passwordchecker>
-
-                <v-btn
-                    class="mr-4"
-                    type="submit"
-                    :disabled="invalid"
-                    @click="register"
-                    color="brown"
-                >
-                  submit
-                </v-btn>
-                <v-btn @click="clear">
-                  clear
-                </v-btn>
-              </form>
-            </validation-observer>
-
-          </v-col>
-        </v-row>
-      </v-card>
+        <ValidationProvider
+            name="password"
+            ref="password"
+            rules="required|customPassword|min:8"
+            v-slot="{ errors }"
+            :bails="false"
+        >
+          <v-text-field
+              class="ma-0"
+              v-model="password"
+              :append-icon="show1 ? 'visibility' : 'visibility_off'"
+              :type="show1 ? 'text' : 'password'"
+              label="Password"
+              counter
+              @click:append="show1 = !show1"
+              outlined
+          ></v-text-field>
+          <ul style="color:red" class="overline text-left">
+            <li v-for="(error, index) in errors" :key="index">
+              <span>{{ error }}</span>
+            </li>
+          </ul>
+        </ValidationProvider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <!-- <v-btn :disabled="!valid" @click="signIn()" text>Login</v-btn> -->
+          <v-btn depressed @click="clear()" color="grey">Clear</v-btn>
+          <v-btn :disabled="!valid" depressed @click="signIn()" color="brown">Login</v-btn>
+        </v-card-actions>
+      </ValidationObserver>
+    </v-card>
     </v-container>
-  </div>
+  </v-app>
 </template>
 
 <script>
-import axios from "axios";
-import passwordchecker from '@/components/passwordchecker'
-import { required, digits, email, max, regex } from 'vee-validate/dist/rules'
-import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
-
-setInteractionMode('eager')
-
-extend('digits', {
-  ...digits,
-  message: '{_field_} needs to be {length} digits. ({_value_})',
-})
-
-extend('required', {
-  ...required,
-  message: '{_field_} can not be empty',
-})
-
-extend('max', {
-  ...max,
-  message: '{_field_} may not be greater than {length} characters',
-})
-
-extend('regex', {
-  ...regex,
-  message: '{_field_} {_value_} does not match {regex}',
-})
-
-extend('email', {
-  ...email,
-  message: 'Email must be valid',
-})
-
-
+import {ValidationProvider, extend} from "vee-validate/dist/vee-validate.full";
+import { ValidationObserver } from "vee-validate/dist/vee-validate.full";
+// can customize default error messages
+extend("required", {
+  message: (field, values) => "You must enter a " + `${field} ${values}` + " value"
+});
+// create custom error message for custom rule
+var errorMessage =
+    " min length 8 chars, and must include 1 lower-case, upper-case, numeral andspecial character (#!@$%^*-)";
+// create custom rule
+extend("customPassword", {
+  message: field => "The " + `${field}` + errorMessage,
+  validate: value => {
+    var notTheseChars = /["'?&/<>\s]/;
+    var mustContainTheseChars = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#!@$%^*-]).{8,}$/;
+    var containsForbiddenChars = notTheseChars.test(value);
+    var containsRequiredChars = mustContainTheseChars.test(value);
+if (containsRequiredChars && !containsForbiddenChars) {
+  return true;
+} else {
+  if (containsForbiddenChars) {
+    errorMessage =
+        ' contains forbidden characters: " ' + " ' ? & / < > or space";
+  } else {
+    errorMessage =
+        " min length 8 chars, and must include 1 lower-case, upper-case, numeraland special character ($@$!%*#?&)";
+  }
+  return false;
+}
+}
+});
 export default {
-name: "register",
-  data() {
-    return {
-
-    }
-  },
+  name: "register",
   components: {
-    passwordchecker,
     ValidationProvider,
     ValidationObserver
   },
-  setPass1(value) {
-    this.registerPassword = value
-    console.log('regpass: ' +value)
+  data() {
+    return {
+      show1: false,
+      name: "",
+      password: "",
+      email: ""
+    };
   },
-  setPass2(value) {
-    this.confirmPassword = value
-    console.log('confirmpass: ' + value)
-  },
-  submit() {
-    this.$refs.observer.validate()
-  },
-  clear () {
-    this.confirmPassword = ''
-    this.registerUsername = ''
-    this.registerEmail = ''
-    this.registerfirstName = ''
-    this.registerlastName = ''
-    this.registerPassword = ''
-    this.$refs.observer.reset()
-  },
-  async register() {
-    if(this.confirmPassword === this.registerPassword) {
-      let body = {
-        email: this.registerEmail,
-        password: this.registerPassword,
-        name: this.registerUsername,
+  computed: {},
+  created() {},
+  methods: {
+    clear() {
+      this.name = '',
+      this.email = '',
+      this.password = ''
+    },
+    async signIn() {
+      const isValid = await this.$refs.observer.validate();
+      if (!isValid) {
+        console.log("is not valid");
+        alert("Please fix errors first!");
+      } else {
+        console.log("is valid");
+        console.log(this.name + " signed in with password " + this.password);
+        // reset fields
+        this.name = "";
+        this.password = "";
+        // reset validation
+        // You should call it on the next frame
+        requestAnimationFrame(() => {
+          this.$refs.observer.reset();
+        });
       }
-      console.log(body)
-      try {
-        const res = await axios.post('http://192.168.50.63:8000/rpc/signup', body)
-        console.log(res)
-        this.email = this.registerEmail
-        this.password = this.registerPassword
-        await this.login()
-      }catch (e){
-        alert(e)
-      }
-    }
-    else {
-      alert('Passwords do not match! Please Re-enter.')
     }
   }
-}
+};
 </script>
-
-<style scoped>
-
-</style>
