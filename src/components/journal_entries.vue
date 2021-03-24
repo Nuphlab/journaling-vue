@@ -29,6 +29,7 @@
               dark
               v-bind="attrs"
               v-on="on"
+              @click.stop="rowInfo(item.entryid); journalEntry = item.bodytext"
           >Open</v-btn>
         </template>
         <v-card>
@@ -36,7 +37,7 @@
             <h4>Entry</h4>
           </v-card-title>
           <v-card-text class="pb-0">
-            <v-textarea readonly outlined v-model="item.bodytext">
+            <v-textarea readonly outlined v-model="journalEntry">
             </v-textarea>
           </v-card-text>
           <v-card-actions>
