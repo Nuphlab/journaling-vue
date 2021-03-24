@@ -264,7 +264,7 @@ name: "journals",
         const res = await axios.post(`http://192.168.50.63:8000/entry?journalid=eq.${this.journalid}`, body, config)
         console.log(res)
         res.data
-        this.journalEntry = ''
+        this.newJournalEntry = ''
       } catch (e) {
         console.log(e)
       }
