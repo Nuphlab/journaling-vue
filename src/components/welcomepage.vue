@@ -1,9 +1,11 @@
 <template>
-  <div class="ma-12 pa-12">
-    <v-card>
+  <v-app>
+      <v-container fluid>
       <v-navigation-drawer
+          mini-variant-width="100"
           permanent
           expand-on-hover
+          height="400"
       >
         <v-list>
           <v-list-item class="px-2">
@@ -42,7 +44,7 @@
             <v-list-item-title>Friends</v-list-item-title>
           </v-list-item>
 
-          <v-list-item link>
+          <v-list-item link href="https://giphy.com/gifs/lgcUUCXgC8mEo/html5" target="_blank">
             <v-list-item-icon>
               <v-icon>mdi-star</v-icon>
             </v-list-item-icon>
@@ -50,8 +52,8 @@
           </v-list-item>
         </v-list>
       </v-navigation-drawer>
-    </v-card>
-  </div>
+      </v-container>
+  </v-app>
 </template>
 
 <script>

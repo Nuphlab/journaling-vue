@@ -57,7 +57,7 @@ export default new Router({
             component: users
         },
         {
-            path: "/friendlist",
+            path: "/friendslist",
             name: "friendslist",
             component: friendslist
         },

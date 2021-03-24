@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <v-btn depressed color="grey darken-2" @click="backbtn">Home</v-btn>
+      <v-btn class="ml-1" depressed color="grey darken-2" @click="backbtn">Home</v-btn>
     <v-alert>
       <h3>Your Journals</h3>
     </v-alert>
@@ -39,7 +39,9 @@
       </template>
 
       <!-- update -->
+
       <template v-slot:[`item.actions`]="{ item }">
+        <!--
         <v-dialog
             v-model="dialogUpdate"
             persistent
@@ -61,6 +63,7 @@
 
           </v-card>
         </v-dialog>
+        -->
 
         <!-- delete -->
         <v-dialog
@@ -114,7 +117,7 @@
 
         <!-- add entry -->
         <v-dialog
-            v-model="dialogUpdate"
+            v-model="dialogEntry"
             persistent
             max-width="600px"
             :retain-focus="false"
@@ -127,10 +130,36 @@
                 dark
                 v-bind="attrs"
                 v-on="on"
+                @click.stop="setJournalID(item.journalid)"
             >mdi-plus</v-icon>
           </template>
           <v-card>
-
+            <v-card-title class="mb-4">
+              <h4>Add Entry</h4>
+            </v-card-title>
+            <v-card-text class="pb-0">
+              <v-textarea outlined v-model="newJournalEntry">
+              </v-textarea>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                  class="mb-2"
+                  color="warning"
+                  text
+                  @click="dialogEntry = false"
+              >
+                Cancel
+              </v-btn>
+              <v-btn
+                  class="mb-2"
+                  color="primary"
+                  text
+                  @click="addEntry(); dialogEntry = false"
+              >
+                Save
+              </v-btn>
+            </v-card-actions>
           </v-card>
         </v-dialog>
 
@@ -178,6 +207,8 @@ export default {
 name: "journals",
   data() {
     return {
+      newJournalEntry: "",
+      dialogEntry: false,
       dialogCreateJournal: false,
       dialogUpdate: false,
       dialogDelete: false,
@@ -215,6 +246,31 @@ name: "journals",
     setJournalID(value) {
       console.log(value)
       this.journalid = value
+    },
+    async addEntry() {
+      let todaysDate = new Intl.DateTimeFormat("fr-CA", {year: "numeric", month: "2-digit", day: "2-digit"}).format(Date.now())
+
+      const config = {
+        headers: {'Authorization': 'Bearer ' + localStorage.token}
+      }
+
+      const body = {
+        datecreated: todaysDate,
+        bodytext: this.newJournalEntry,
+        journalid: this.journalid
+      }
+      console.log(body)
+      try {
+        const res = await axios.post(`http://192.168.50.63:8000/entry?journalid=eq.${this.journalid}`, body, config)
+        console.log(res)
+        res.data
+        this.journalEntry = ''
+      } catch (e) {
+        console.log(e)
+      }
+      // alert('Successfully Deleted')
+      // this.values = []
+      // await this.GetJournals()
     },
     async deletejournal() {
       const config = {

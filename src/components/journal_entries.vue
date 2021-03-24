@@ -1,7 +1,7 @@
 <template>
   <v-app>
 <v-main>
-  <v-btn depressed color="grey darken-2" @click="backbtn">Back to Journals</v-btn>
+  <v-btn class="ml-1" depressed color="grey darken-2" @click="backbtn">Back to Journals</v-btn>
   <v-alert>
     <h3>Your Entries</h3>
   </v-alert>
@@ -71,6 +71,7 @@
               dark
               v-bind="attrs"
               v-on="on"
+              @click.stop="rowInfo(item.entryid); journalEntry = item.bodytext"
           >mdi-pencil</v-icon>
         </template>
         <v-card>
@@ -89,13 +90,13 @@
                 text
                 @click="dialogUpdate = false"
             >
-              Close
+              Cancel
             </v-btn>
             <v-btn
                 class="mb-2"
                 color="primary"
                 text
-                @click="dialogUpdate = false"
+                @click="updateEntry(); dialogUpdate = false"
             >
               Save
             </v-btn>
@@ -195,6 +196,27 @@ name: "journal_entries",
     await this.GetJournalEntries()
   },
   methods: {
+    async updateEntry() {
+      const config = {
+        headers: {'Authorization': 'Bearer ' + localStorage.token}
+      }
+
+      const body = {
+        bodytext: this.journalEntry
+      }
+
+      try {
+        const res = await axios.patch(`http://192.168.50.63:8000/entry?entryid=eq.${this.entryid}`, body, config)
+        console.log(res)
+        res.data
+        this.journalEntry = ''
+      } catch (e) {
+        console.log(e)
+      }
+      // alert('Successfully Deleted')
+      this.values = []
+      await this.GetJournalEntries()
+    },
     async deleteEntry() {
      const config = {
        headers: {'Authorization': 'Bearer ' + localStorage.token}
